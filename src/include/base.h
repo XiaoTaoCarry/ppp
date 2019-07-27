@@ -24,15 +24,19 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <ctx.h>
+#include <config.h>
 
 #define __SOCKET_MODE__
 
 // #define SA                      struct sockaddr
 
 #define SYSTEM_LOG "/tmp/ibe_log"
-#define NUM_THREADS 4
+#define NUM_THREADS 1
 
+#define ERROR(s) {  \
+    fprintf(stderr, s); \
+    fprintf(stderr, "\n"); \
+}
 
 
 /*****************************************************
@@ -73,6 +77,6 @@ FILE* open_log_file();
  * @param id_len the length of the id 
  * @return -1 when something wrong, 0 when no errors
  */
-int socket_interface_run(const char* entity_id, int id_len);
+int socket_interface_run(const char* entity_id, int id_len, void (*f) ());
 
 #endif

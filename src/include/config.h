@@ -24,19 +24,16 @@
 #define SERVER_LISTEN_PORT      5001
 #define SERVER_RUN_PORT         5002
 
-/* key lengths */
-#define AES_KEY_BITS            256 
-#define AES_KEY_LEN             (AES_KEY_BITS/8)
+#define SC_LEN 4
+#define DATA_LEN 252
+#define HV_LEN 16
 
+#define KEY "ABCDEF0123456789ABC2019200436358"
 
-/* application protocol */
+#define CLIENT_ID           "CLIENT"
+#define CLIENT_ID_LEN       6
+#define CLIENT_PORT         10001
 
-#define PLAIN_MESSAGE_TYPE          0
-
-#define PRIVATE_KEY_REQUEST_TYPE    1
-#define PRIVATE_KEY_REQUEST_HEAD    5           /* the length of the head */
-#define PRIVATE_KEY_RESPONSE_TYPE   1
-#define PRIVATE_KEY_RESPONSE_HEAD   1
 
 #endif
 

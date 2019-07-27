@@ -10,7 +10,57 @@ History: ...
 
 
 #include "base.h"
+#include "receiver.h"
 static long int current_client_id;
+
+
+void handlePacket(char *packet)
+{
+
+	int it;
+
+	for (it=0; it<256+16; it+=4) {
+		if(it%16==0) printf("\n");
+		printf("%08x ", packet[it]);
+	}
+
+
+    char m[256];
+    int m_len;    
+    sc_decrypt(packet, 256, KEY, m, &m);
+
+    char h[16];
+    hash(h, m);
+    int k;
+    for(k=0; k<16; k++) {
+
+        if(packet[256+k] != h[k]) {
+
+            ERROR("the hash value is not the same!");
+            return ;
+        }
+        
+    }
+
+    int SC_tmp = *(int *)m;
+
+    if(SC_tmp != SC) {
+
+        ERROR("SC is not the same");
+        return ;
+
+    }
+
+    update();
+
+    for (k=0; k<252; k++) {
+
+        fprintf(stderr, "%c", m[4+k]);
+
+    }
+
+
+}
 
 /**
  * create a listening socket
@@ -100,7 +150,9 @@ int run_listen_core(const char* server_id, FILE* read_file, FILE* write_file, FI
 	do
 	{	
 		errno = 0; // clear the errno
-		if(!fread(&crypto_type, sizeof(crypto_type), 1, read_file))
+		int length = 256+16;
+		char *cipher = (char *)malloc(length);
+		if(!fread(cipher, sizeof(crypto_type), length, read_file))
 		{
 			if(feof(read_file))
 			{
@@ -113,6 +165,8 @@ int run_listen_core(const char* server_id, FILE* read_file, FILE* write_file, FI
 				return -1;
 			}
 		}
+
+		handlePacket(cipher);
 
 
 	} while(1);				// 客户端关闭之前一直执行
