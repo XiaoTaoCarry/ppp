@@ -3,6 +3,7 @@
 
 #include "sender.h"
 #include "config.h"
+#include "packet.h"
 
 
 void split(char **dest, int num, char *src)
@@ -77,10 +78,10 @@ void addHash(char *dest, char *src)
 
     }
 }
-void update()
+void update(int *SC)
 {
 
-    SC++;
+    *SC = *SC + 1;
 
 }
 void initial()

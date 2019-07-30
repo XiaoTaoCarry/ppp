@@ -2,7 +2,7 @@
 #include "comm.h"
 #include "base.h"
 #include "receiver.h"
-#include "first.h"
+#include "crypto.h"
 
 #include <config.h>
 #include <stdlib.h>
@@ -14,6 +14,6 @@
 int main()
 {
 
-    socket_main(SERVER_ID, SERVER_ID_LEN, SERVER_LISTEN_PORT, NULL);
+    socket_main(SERVER_ID, SERVER_ID_LEN, SERVER_LISTEN_PORT, &SC);
 
 }

@@ -1,9 +1,10 @@
 #include <stdio.h>
 
-#include "first.h"
+#include "crypto.h"
 int sc_encrypt(char *pl_text, int pl_len, char *key, char *a, int *a_len)
 
 {
+
     int i,j,t,tmp,k;
     int S[ST_LEN];
     int T[ST_LEN];
@@ -35,10 +36,11 @@ int sc_encrypt(char *pl_text, int pl_len, char *key, char *a, int *a_len)
         S[j]=tmp;
         t = (S[i]+S[j])% ST_LEN;
         k = S[t];
+
         a[r]=k^pl_text[r];
-    
     }
 
+    int it;
 
 
     *a_len=pl_len;

@@ -1,6 +1,6 @@
 #ifndef CONFIG__H
 #define CONFIG__H
-#define KEY_LEN  (128/8)
+#define KEY_LEN  32
 
 #define ST_LEN  256
 

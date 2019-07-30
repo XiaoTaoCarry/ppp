@@ -60,7 +60,7 @@ int     Accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 int create_listening_socket(int listen_port);
 int connect_socket_server(char* ip_addr, int port, FILE** read_file, FILE** write_file);
 int disconnect_socket_server(FILE* read_file, FILE* write_file);
-int run_listen_core(const char* server_id, FILE* read_file, FILE* write_file, FILE* log_file);
+int run_listen_core(const char* server_id, FILE* read_file, FILE* write_file, FILE* log_file, int *sc);
 void *socket_listener_run(void *args);
 void sig_chld(int signo);
 
@@ -77,6 +77,6 @@ FILE* open_log_file();
  * @param id_len the length of the id 
  * @return -1 when something wrong, 0 when no errors
  */
-int socket_interface_run(const char* entity_id, int id_len, void (*f) ());
+int socket_interface_run(const char* entity_id, int id_len, int *sc);
 
 #endif
