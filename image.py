@@ -1,4 +1,7 @@
 import math
+import numpy as np
+from scipy import integrate
+
 
 class RGBImage:
     """
@@ -151,6 +154,10 @@ class GreyImage:
         new_pixel = [self.get_pixels()] * 3
         return RGBImage(new_pixel)
 
+def lorenz(p,t,s,r,b):
+    x,y,z = p.tolist()          #无质量点的当前位置(x,y,z)
+    return s*(y-x),x*(r-z)-y,x*y-b*z #返回dx/dt,dy/dt,dz/dt
+
 
 # Part 2: Image Processing Methods #
 class ImageProcessing:
@@ -234,3 +241,81 @@ class ImageProcessing:
 
         return GreyImage(new_pixels)
 
+
+    @staticmethod
+    def lorenz_trans(image, m=1, init=(1.1840,1.3627,1.2519)):
+        rows,cols = image.size()
+        n = rows * cols
+
+        t = np.arange(0,(n+99)//100,0.01)
+        track= integrate.odeint(lorenz,init,t,args=(10,28,2.6))
+        factor = 10**m
+        X = [t[0] for t in track]
+        X = [factor*v - round(factor*v) for v in X]
+        Y = [t[1] for t in track]
+        Y = [factor*v - round(factor*v) for v in Y]
+        Z = [t[2] for t in track]
+        Z = [factor*v - round(factor*v) for v in Z]
+        track = [X[:n],Y[:n],Z[:n]]             # re-organize the matrix
+
+        pixels_ori = image.get_pixels()
+        temp = []
+        for t in pixels_ori:
+            temp.extend(t)
+        pixels_ori = temp                # 转成1维
+
+        for X in track:
+            # 1. 获取下标
+            X = [(i,v) for i,v in enumerate(X)]
+            # 2. 根据值排序
+            X.sort(key=lambda a: a[1])
+            # 3. 获得置换
+            X = [i for i,v in X]
+            # 4. 执行置换
+            pixels_new = [0] * n
+            for i in range(n):
+                pixels_new[i] = pixels_ori[X[i]]
+            pixels_ori = pixels_new
+        
+        # 转回2维
+        pixels_new = [pixels_new[i*cols:(i+1)*cols] for i in range(rows)]
+        return GreyImage(pixels=pixels_new)
+
+    @staticmethod
+    def lorenz_trans_reverse(image, m=1, init=(1.1840,1.3627,1.2519)):
+        rows,cols = image.size()
+        n = rows * cols
+
+        t = np.arange(0,(n+99)//100,0.01)
+        track= integrate.odeint(lorenz,init,t,args=(10,28,2.6))
+        factor = 10**m
+        X = [t[0] for t in track]
+        X = [factor*v - round(factor*v) for v in X]
+        Y = [t[1] for t in track]
+        Y = [factor*v - round(factor*v) for v in Y]
+        Z = [t[2] for t in track]
+        Z = [factor*v - round(factor*v) for v in Z]
+        track = [Z[:n],Y[:n],X[:n]]             # re-organize the matrix
+
+        pixels_ori = image.get_pixels()
+        temp = []
+        for t in pixels_ori:
+            temp.extend(t)
+        pixels_ori = temp                # 转成1维
+
+        for X in track:
+            # 1. 获取下标
+            X = [(i,v) for i,v in enumerate(X)]
+            # 2. 根据值排序
+            X.sort(key=lambda a: a[1])
+            # 3. 获得置换
+            X = [i for i,v in X]
+            # 4. 执行逆置换
+            pixels_new = [0] * n
+            for i in range(n):
+                pixels_new[X[i]] = pixels_ori[i]
+            pixels_ori = pixels_new
+        
+        # 转回2维
+        pixels_new = [pixels_new[i*cols:(i+1)*cols] for i in range(rows)]
+        return GreyImage(pixels=pixels_new)

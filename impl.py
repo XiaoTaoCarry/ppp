@@ -29,8 +29,18 @@ img_save('img/output/dsc20_encoded.png', encoded)
 xored = ImageProcessing.xor_key(encoded, key=50)
 img_save('img/output/dsc20_xored.png', encoded)
 
-unxored = ImageProcessing.xor_key(xored, key=50)
+lorenz_transed = ImageProcessing.lorenz_trans(xored)
+img_save('img/output/dsc20_transed.png', encoded)
+
+lorenz_trans_reversed = ImageProcessing.lorenz_trans_reverse(lorenz_transed)
+img_save('img/output/dsc20_reversed.png', encoded)
+
+
+unxored = ImageProcessing.xor_key(lorenz_trans_reversed, key=50)
 img_save('img/output/dsc20_unxored.png', encoded)
+
+# img_save('img/output/dsc20_transed.png', lorenz_transed)
+
 
 decoded = ImageProcessing.arnold_decode(unxored, shuffle_times=5)
 img_save('img/output/dsc20_decoded.png', decoded)
