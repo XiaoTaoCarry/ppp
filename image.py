@@ -251,19 +251,22 @@ class ImageProcessing:
         track= integrate.odeint(lorenz,init,t,args=(10,28,2.6))
         factor = 10**m
         X = [t[0] for t in track]
-        X = [factor*v - round(factor*v) for v in X]
         Y = [t[1] for t in track]
-        Y = [factor*v - round(factor*v) for v in Y]
         Z = [t[2] for t in track]
+        X = [factor*v - round(factor*v) for v in X]
+        Y = [factor*v - round(factor*v) for v in Y]
         Z = [factor*v - round(factor*v) for v in Z]
         track = [X[:n],Y[:n],Z[:n]]             # re-organize the matrix
 
+        # 第三步
+        # 3.1 转成1维
         pixels_ori = image.get_pixels()
         temp = []
         for t in pixels_ori:
             temp.extend(t)
-        pixels_ori = temp                # 转成1维
+        pixels_ori = temp                
 
+        # 3.2 置换
         for X in track:
             # 1. 获取下标
             X = [(i,v) for i,v in enumerate(X)]
@@ -277,6 +280,33 @@ class ImageProcessing:
                 pixels_new[i] = pixels_ori[X[i]]
             pixels_ori = pixels_new
         
+        # TODO: 第4步和第5步都未对图片做任何修改
+        # 第4步
+        # 4.1  生成bx, by, bz序列
+        X = [t[0] for t in track]
+        Y = [t[1] for t in track]
+        Z = [t[2] for t in track]
+        track = [X[:n],Y[:n],Z[:n]]             # re-organize the matrix
+        bs = []
+        for x in track:
+            b = [0] * (n+1)
+            for i in range(n//3):
+                t = 10**m * x[i] - round(10**m * x[i])
+                t = abs(t)
+                t = t * 10**15
+                if i==0:
+                    t = t + 127             # plus M[-1]
+                else:
+                    t = t + pixels_ori[3*i-1]
+                t = round(t)
+                t = t % 256
+                b[x[i]] = t
+        
+        # 第5步
+        e = [0] * n 
+        for i  in range(n//3):
+            e[3*i] = pixels_ori
+
         # 转回2维
         pixels_new = [pixels_new[i*cols:(i+1)*cols] for i in range(rows)]
         return GreyImage(pixels=pixels_new)

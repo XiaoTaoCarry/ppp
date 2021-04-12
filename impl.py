@@ -45,3 +45,7 @@ img_save('img/output/dsc20_unxored.png', encoded)
 decoded = ImageProcessing.arnold_decode(unxored, shuffle_times=5)
 img_save('img/output/dsc20_decoded.png', decoded)
 
+pixels1 = greyed.get_pixels()
+pixels2 = decoded.get_pixels()
+
+assert pixels1==pixels2
